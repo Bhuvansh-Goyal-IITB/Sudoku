@@ -2,6 +2,15 @@
 
 void init_board(int board[][9]);
 
+void print_board(int board[][9]) {
+    for (size_t row = 0; row < 9; row++) {
+        for (size_t column = 0; column < 9; column++) {
+            printf("%d ", board[row][column]);     
+        }
+        puts("");
+    }
+}
+
 int is_valid(int board[][9], int position[], int value) {
     for (size_t row = 0; row < 9; row++) {
         if ((board[row][position[1]] == value) && (row != position[0])) {
@@ -26,16 +35,41 @@ int is_valid(int board[][9], int position[], int value) {
     return 1;
 }
 
-void generate_board(int board[][9]) {
+int next_empty_cell(int board[][9]) {
+    for (size_t row = 0; row < 9; row++) {
+        for (size_t column = 0; column < 9; column++) {
+            if (board[row][column] == 0) {
+                return row * 10 + column;
+            }       
+        }
+    }
+    return -1;
+}
 
+int solve_board(int board[][9], int current_pos[]) {
+    for (size_t i = 1; i <= 9; i++) {
+        if (is_valid(board, current_pos, i)) {
+            
+            board[current_pos[0]][current_pos[1]] = i;
+
+            int temp = next_empty_cell(board);
+            int next_empty_pos[2] = {temp / 10, temp % 10};
+            if (temp == -1) {
+                return 1;
+            }
+
+            if (solve_board(board, next_empty_pos) == -1) {
+                continue;
+            } else {
+                return 1;
+            }
+        }
+    }
+    
+    board[current_pos[0]][current_pos[1]] = 0;
+    return -1;
 }
 
 int main() {
-    int board[9][9] = {
-        {1, 2, 0, 4, 0, 6, 7, 8, 0},
-        {3, 4, 5, 0, 0, 0, 0, 0, 0},
-        {6, 0, 8, 9, 0, 0, 0, 0, 0}
-    };
-    int pos[2] = {0, 2};
-    printf("%d", is_valid(board, pos, 9));
+
 }
