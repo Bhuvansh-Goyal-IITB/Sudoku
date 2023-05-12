@@ -223,7 +223,7 @@ void shuffle(int array[], int size) {
 }
 
 int fill_board(int board[][9], int current_pos[], int counter, const int values[], int stop) {
-    for (size_t i = 1; i <= 9; i++) {
+    for (size_t i = 0; i < 9; i++) {
         if (is_valid(board, current_pos, values[i])) {
             board[current_pos[0]][current_pos[1]] = values[i];
 
