@@ -3,12 +3,12 @@ import random
 class Sudoku:
     def __init__(self, blanks):
         self.board = [[0 for _ in range(9)] for _ in range(9)]
-        self.generate_board()
-        
-        self.solved_board = [[self.board[i][j] for i in range(9)] for j in range(9)]
 
-        self.remove_random(blanks)
+        self.generate_board(blanks)
         self.unsolved_board = [[self.board[i][j] for i in range(9)] for j in range(9)]
+
+        self.solve_board()
+        self.solved_board = [[self.board[i][j] for i in range(9)] for j in range(9)]
 
     def new_board(self, blanks):
         self.__init__(blanks)
@@ -34,7 +34,7 @@ class Sudoku:
         first_empty = self.next_empty_cell()
         inner(first_empty)
 
-    def generate_board(self):
+    def generate_board(self, blanks):
         stop = random.randint(1, 5000)
         
         self.board = [[0 for _ in range(9)] for _ in range(9)]
@@ -42,6 +42,9 @@ class Sudoku:
         while (iteration < stop):
             self.board = [[0 for _ in range(9)] for _ in range(9)]
             iteration = self.fill_board(stop)
+        
+        if not self.remove_random(blanks):
+            self.generate_board(blanks)
 
     def print_board(self, board):
         for row in range(9):
@@ -58,17 +61,27 @@ class Sudoku:
         return count
 
     def remove_random(self, blanks):
+        iteration = 0
+        filled_pos = []
         while self.count_blanks() < blanks:
-            
-            random_pos = (random.randint(0, 8), random.randint(0, 8))
-            while self.board[random_pos[0]][random_pos[1]] == 0:
-                random_pos = (random.randint(0, 8), random.randint(0, 8))
-            
+            filled_pos.clear()
+            for i in range(9):
+                for j in range(9):
+                    if self.board[i][j] != 0:
+                        filled_pos.append((i, j))
+            random_pos = random.choice(filled_pos)
+
             current_value = self.board[random_pos[0]][random_pos[1]]
             self.board[random_pos[0]][random_pos[1]] = 0
 
             if not self.unique_solution():
                 self.board[random_pos[0]][random_pos[1]] = current_value
+
+            iteration += 1
+            print(f"iteration: {iteration}")
+            if iteration > 70:
+                return False
+        return True
 
     def is_valid(self, pos, value):
         for row in range(9):

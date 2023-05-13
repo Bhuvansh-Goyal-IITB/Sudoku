@@ -2,6 +2,7 @@ import pygame
 from sys import exit
 from button import Button
 from text import Text
+from board import Board
 
 class Game:
     def __init__(self):
@@ -44,13 +45,29 @@ class Game:
     
     def game(self):
         pygame.display.set_caption("Game")
+
+        pencil_mode = False
+
+        board = Board((300, 400), 60, 55) 
+
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.quit()
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_m:
-                    self.main_menu()
-            
+                    self.main_menu() 
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    board.cell_group.update()
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_p:
+                    pencil_mode = not pencil_mode
+                if event.type == pygame.KEYDOWN and (event.key >= 49 and event.key <= 57):
+                    board.set_value(event.key - 48, pencil_mode)
+                    board.test()
+
+            board.highlight_wrong()
+            board.select_check()
+    
+            board.cell_group.draw(self.screen)
             pygame.display.update()
             self.clock.tick(self.FPS)
 
