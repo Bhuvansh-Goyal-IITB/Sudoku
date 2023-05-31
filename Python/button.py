@@ -12,7 +12,7 @@ class Button(pygame.sprite.Sprite):
 
         self.image.fill("White")
 
-        pygame.draw.rect(self.image, "Black", self.image.get_rect(), width=2)
+        pygame.draw.rect(self.image, "Black", self.image.get_rect(), width=4)
 
         self.text = pygame.sprite.Group()
         Text(font_size, text, "Black", (size[0]/2, size[1]/2), [self.text])
@@ -27,11 +27,11 @@ class Button(pygame.sprite.Sprite):
                     self.on_click()
             else:
                 self.image.fill("Grey")
-                pygame.draw.rect(self.image, "Black", self.image.get_rect(), width=2)
+                pygame.draw.rect(self.image, "Black", self.image.get_rect(), width=4)
                 self.text.draw(self.image)
         else:
             self.image.fill("White")
-            pygame.draw.rect(self.image, "Black", self.image.get_rect(), width=2)
+            pygame.draw.rect(self.image, "Black", self.image.get_rect(), width=4)
             self.text.draw(self.image)
         
     def update(self):

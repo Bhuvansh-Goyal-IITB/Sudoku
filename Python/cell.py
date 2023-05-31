@@ -3,20 +3,19 @@ import pygame
 from text import Text
 
 class Cell(pygame.sprite.Sprite):
-    def __init__(self, pos_center, cell_width, cell_value, groups, correct_value=None):
+    def __init__(self, pos_center, cell_width, cell_value, border, normal_font_size, pencil_font_size, groups):
         super().__init__(groups)
         self.cell_width = cell_width
         self.pencil_values = []
+
+        self.border = border
+
+        self.current_color = "White"
 
         self.initial_value = cell_value
         self.current_value = cell_value
 
         self.selected = False
-
-        if self.initial_value != 0:
-            self.correct_value = cell_value
-        else:
-            self.correct_value = correct_value
 
         self.image = pygame.Surface((cell_width, cell_width))
         
@@ -25,41 +24,35 @@ class Cell(pygame.sprite.Sprite):
         
         self.text = pygame.sprite.Group()
 
+        self.normal_font_size = normal_font_size
+        self.pencil_font_size = pencil_font_size
+
         if self.initial_value != 0:
-            Text(30, str(cell_value), "Black", (cell_width/2, cell_width/2), [self.text])
+            Text(normal_font_size, str(cell_value), "Black", (cell_width/2, cell_width/2), [self.text])
         
-        self.draw_cell("White")
+        self.draw_cell()
 
 
-    def draw_cell(self, color):
-        self.image.fill(color)
-        pygame.draw.rect(self.image, "Black", self.image.get_rect(), width=2)
+    def draw_cell(self):
+        self.image.fill(self.current_color)
+        pygame.draw.rect(self.image, "Black", self.image.get_rect(), width=self.border)
         self.text.draw(self.image)
 
-    def set_value(self, value, font_size):
+    def set_value(self, value):
         if self.initial_value != 0:
             return
         
         self.pencil_values.clear()
-        
+        self.text.empty() 
+
         if self.current_value == value:
             self.current_value = 0
-            
-            self.text.empty() 
 
         else:
             self.current_value = value
+            Text(self.normal_font_size, str(value), "#055C9D", (self.cell_width/2, self.cell_width/2), [self.text])
 
-            self.text.empty() 
-
-            if self.correct_value == self.current_value:
-                color = "Blue"
-            else:
-                color = "Red"
-
-            Text(font_size, str(value), color, (self.cell_width/2, self.cell_width/2), [self.text])
-
-    def pencil(self, input_value, font_size):
+    def pencil(self, input_value):
         if self.initial_value != 0:
             return
 
@@ -79,24 +72,18 @@ class Cell(pygame.sprite.Sprite):
             pos_x = (self.cell_width / 6) + (col * (self.cell_width / 3)) 
             pos_y = (self.cell_width / 6) + (row * (self.cell_width / 3))  
 
-            Text(font_size, str(value), "Black", (pos_x, pos_y), [self.text])
-
-    def select(self):
-        self.selected = True
-        self.draw_cell("Grey")
-
-    def deselect(self):
-        self.selected = False
-        if self.current_value == 0 or self.current_value == self.correct_value:
-            self.draw_cell("White")
-        else:
-            self.draw_cell("#FFCCCB")
-
-    def check_mouse(self):
-        if self.rect.collidepoint(pygame.mouse.get_pos()) and pygame.mouse.get_pressed()[0]:
-            self.select()
-        else:
-            self.deselect()
+            Text(self.pencil_font_size, str(value), "#5d5d5d", (pos_x, pos_y), [self.text])
     
+    def clear_cell(self):
+        if self.initial_value != 0:
+            return
+
+        self.pencil_values.clear()
+        self.text.empty() 
+
+        self.current_value = 0
+
     def update(self):
-        self.check_mouse()
+        self.draw_cell()
+
+        
