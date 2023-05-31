@@ -1,2 +1,7 @@
-*.exe
-tempCodeRunnerFile.c
+tempCodeRunnerFile.*
+.venv
+__pycache__
+build 
+dist
+*.spec
+C/*.exe
